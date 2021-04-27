@@ -15,6 +15,14 @@
   <!-- Custom Files -->
   <script src="script.js"></script>
   <link rel="stylesheet" href="style.css">
+  
+  <script>
+    
+
+   
+
+  </script>
+
 </head>
 
 <body>
@@ -86,35 +94,73 @@
       <p>
         &nbsp;&nbsp;&nbsp;&nbsp; Discover new parks to visit by filtering their amenities and viewing them on the map. You can save your pictures and your favorite parks for quick reference.
       </p>
+      <div class="mdc-layout-grid mb3">
+        <div class="mdc-layout-grid__inner">
+          <div class="mdc-layout-grid__cell">
+            <div class="mdc-card homeCard center" >
+            
+              <h1>Filter </h1>
+              <p>
+                Filter the data to choose your own criteria for the parks shown to you. Choose amenities and other options you are looking for.
+              </p>
 
+              
+          
+            </div>  
+          </div>
+          <div class="mdc-layout-grid__cell">
+            <div class="mdc-card homeCard center" >
+            
+              <h1>Map </h1>
+              <p>
+                Displays parks close to you with any applied filters. View park details upon clicking on map markers. 
+              </p>
+          
+            </div>  
+          </div>
+          <div class="mdc-layout-grid__cell">
+            <div class="mdc-card homeCard center" >
+            
+              <h1>My Parks </h1>
+              <p>
+                A list of your favorite parks and any images taken with the application.  
+              </p>
+          
+            </div>  
+          </div>
+        </div>
+      </div>
+      
     </div>
     <!-- Start of filter -->
     <div id = "filter" class="screen">
       <h1> Filter </h1>
+      
     </div>
     <div id = "map" class="screen">
       <h1> Map </h1>
+      <div id="map-container"></div>
+      <p id="numparksdisplayed"> </p>
+
+      <!-- <h1> Fin</h1> -->
     </div>
     <div id = "favorites" class="screen">
       <h1> My Parks </h1>
     </div>
   </main>
 
+  
 
 
+
+
+  
   <!-- <script src="app.js" async></script> -->
-  <script>
-//   if ('serviceWorker' in navigator) {
-//     navigator.serviceWorker.register('/sw.js').then(function(registration) {
-//       // Registration was successful
-//       console.log('ServiceWorker registration successful with scope: ', registration.scope);
-//     }).catch(function(err) {
-//       // registration failed :(
-//       console.log('ServiceWorker registration failed: ', err);
-//     });
-//   }
-
-    
-  </script>
+ 
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRJvN3LHRUT0ZT9WSDivmkCJcnlvpNtcA&callback=initMap&libraries=&v=weekly"
+  async
+   ></script>
 </body>
 </html>
