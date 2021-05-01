@@ -1,5 +1,4 @@
 
-
 :root {
     --mdc-theme-primary: #356859;
     --mdc-theme-secondary: #775447;
@@ -14,6 +13,10 @@ main {
 #map-container {
     height: 500px;
   
+}
+
+.mdc-text-field:not(.mdc-text-field--disabled) .mdc-floating-label {
+    color: var(--mdc-theme-primary) !important;
 }
 
 h1, h2, h3 {

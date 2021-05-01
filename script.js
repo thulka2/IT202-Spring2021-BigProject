@@ -1,6 +1,26 @@
 let parkJSON;
 let uniqueZips;
 let map;
+
+// chip name -> json entry name
+const amenityMap = {
+    'Basketball': 'basketball, basketba_1',
+    'Baseball': 'baseball_j, baseball_s, baseball_b',
+    'Beach': 'beach',
+    'Boat Launch': 'boat_lau_1, boat_launc',
+    'Football': 'football_s',
+    'Gymnasium': 'gymnasium',
+    'Handball': 'handball_i, handball_r',
+    'Minigolf': 'minigolf',
+    'Playground': 'playground, playgrou_1',
+    'Pool (Indoor)': 'pool_indoo',
+    'Pool (Outdoor)': 'pool_outdo',
+    'Skate Park': 'skate_park',
+    'Tennis': 'tennis_cou'
+
+}
+
+let slider;
 function initMap() {
       map = new google.maps.Map(document.querySelector("#map-container"), {
           center: {lat: 41.869, lng: -87.649},
@@ -33,7 +53,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
     })
 
 
+    
 
+    // shell contents
     const topAppBar = mdc.topAppBar.MDCTopAppBar.attachTo(document.querySelector('.mdc-top-app-bar'));
     const drawer = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
     topAppBar.setScrollTarget(document.querySelector('#main-content'));
@@ -42,6 +64,26 @@ window.addEventListener('DOMContentLoaded', (event) => {
     hamburgerButton.addEventListener( "click", () => {
         drawer.open = !drawer.open;
     });
+
+    // filter
+    slider = mdc.slider.MDCSlider.attachTo(document.querySelector('.mdc-slider'));
+
+    let textFields = document.querySelectorAll('.mdc-text-field');
+    textFields.forEach ((tf) => {
+        mdc.textField.MDCTextField.attachTo(tf);
+    })
+
+
+    document.querySelector('.mdc-slider').addEventListener("MDCSlider:change", () => {
+        // console.log(slider.getValue());
+        document.querySelector('#maxmiles p').innerHTML = `${slider.getValue()}  miles`;
+    })
+
+    
+   
+    // if(document.querySelector('.mdc-slider')) {
+
+    // }
 
     // drawer settings
     document.querySelectorAll('.mdc-list a').forEach(element => {
@@ -56,15 +98,28 @@ window.addEventListener('DOMContentLoaded', (event) => {
             if (screen == "map") {
                 updateMap();
             }
+
+           
             let targetScreen = document.querySelector("#" + screen);
             targetScreen.style.display = "block"; // display only the selected screen
-            console.log(element.getAttribute('data-screen'));
+            if (screen == "filter") {
+               
+                slider.setValue(slider.getValue());
+                slider.layout();
+            }
+            //console.log(element.getAttribute('data-screen'));
 
         })
     });
 
+
+   
+    
+
     // get park data
     //https://data.cityofchicago.org/resource/ejsh-fztr.json
+
+
 
     fetch(' https://data.cityofchicago.org/resource/ejsh-fztr.json').then( (response) => {
         return response.json()})
@@ -109,6 +164,28 @@ window.addEventListener('DOMContentLoaded', (event) => {
         document.querySelector("#numparksdisplayed").innerHTML = `Total parks displayed: ${parkJSON.length}`;
 
     })
+
+    
+    // add amenity chips
+    const chipSetEl = document.querySelector('.mdc-chip-set');
+    const chipSet = mdc.chips.MDCChipSet.attachTo(chipSetEl);
+
+    const templateChip = document.querySelector('#templateChip');
+    for (const [key, value] of Object.entries(amenityMap)) {
+        //console.log(`${key}: ${value}`);
+        let tmp = templateChip.cloneNode(true);
+        tmp.querySelector('.mdc-chip__text').innerHTML = key;
+        tmp.removeAttribute('id');
+        chipSetEl.appendChild(tmp);
+        chipSet.addChip(tmp)
+
+    }
+
+    document.querySelector('#templateChip').style.display = 'none';
+    chipSetEl.removeChild(templateChip);
+
+
+
 
    
 
