@@ -135,6 +135,17 @@ p {
     font-size: 16px;
 }
 
+#capturec {
+    display: none;
+  }
+
+video {
+    width: 100%;
+    max-height: 5000px;
+    display: block;
+    margin: 0 auto;
+}
+
 
 body { 
     margin : 0px; 

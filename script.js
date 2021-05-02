@@ -7,6 +7,17 @@ let snackbar;
 let favList;
 let db = new Dexie("my_database");
 
+let video;
+
+let currentStream;
+let selectedCamera;
+
+function stopMediaTracks(stream) {
+    stream.getTracks().forEach(track => {
+        track.stop();
+    });
+}
+
 // chip name -> json entry name
 const amenityMap = {
     'Basketball': 'basketball, basketba_1',
@@ -42,6 +53,26 @@ function initMap() {
 
 window.addEventListener('DOMContentLoaded', (event) => {
 
+    video = document.querySelector('#video');
+    const cameraButtons = document.querySelector('#controls');
+    const captureButton = document.getElementById('capture');
+    let snapshot = document.getElementById( "captured" );
+    let capture = document.getElementById( "capturec" );
+
+
+    captureButton.addEventListener("click", () => {
+        var ctx = capture.getContext( '2d' );
+		var img = new Image();
+
+		ctx.drawImage( document.querySelector('#video'), 0, 0, capture.width, capture.height );
+
+		img.src		= capture.toDataURL( "image/png" );
+		img.width	= 240;
+
+		snapshot.innerHTML = '';
+
+		snapshot.appendChild( img );
+    })
     // db.open();
     db.version(1).stores({
         parks: 'name, address,images',
@@ -132,6 +163,56 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
             if (screen == "favorites") {
                 updateMyParks();
+                if (typeof currentStream !== 'undefined') {
+                    stopMediaTracks(currentStream);
+                }
+                //console.log(selectedButton);
+                const videoConstraints = {};
+                if (selectedCamera === '') {
+                    videoConstraints.facingMode = 'environment';
+                } else {
+                    videoConstraints.deviceId = { exact: selectedCamera };
+                }
+                const constraints = {
+                    video: videoConstraints,
+                    audio: false
+                };
+            
+                navigator.mediaDevices
+                .getUserMedia(constraints)
+                .then(stream => {
+                currentStream = stream;
+                video.srcObject = stream;
+                return navigator.mediaDevices.enumerateDevices();
+                })
+                .then(gotDevices)
+                .catch(error => {
+                console.error(error);
+                });
+            
+                function gotDevices(mediaDevices) {
+                    cameraButtons.innerHTML = '';
+                    let count = 1;
+                    mediaDevices.forEach(mediaDevice => {
+                        if (mediaDevice.kind === 'videoinput') {
+                        const btn = document.createElement('button');
+                        btn.value = mediaDevice.deviceId;
+                        const label = mediaDevice.label || `Camera ${count++}`;
+                        const textNode = document.createTextNode(label);
+                        btn.appendChild(textNode);
+                        btn.addEventListener('click', event => {
+                            selectedCamera = btn.value;
+                        })
+                        cameraButtons.appendChild(btn);
+                        }
+                    });
+                }
+                
+                
+            
+               
+                navigator.mediaDevices.enumerateDevices().then(gotDevices);
+            
             }
 
            
@@ -448,7 +529,7 @@ let updateMyParks = () => {
             tmp.appendChild(spn);
 
             tmp.querySelector('span').addEventListener("click", (e) => {
-                window.location = (`http://maps.google.com/?&q=${url}`);
+                window.open(`http://maps.google.com/?&q=${url}`);
             })
 
             tmp.querySelector('button').addEventListener("click", (e) => {
