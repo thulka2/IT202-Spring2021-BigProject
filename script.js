@@ -54,7 +54,7 @@ function initMap() {
 window.addEventListener('DOMContentLoaded', (event) => {
 
     video = document.querySelector('#video');
-    const cameraButtons = document.querySelector('#controls');
+    const cameraButtons = document.querySelector('#cameraChoices');
     const captureButton = document.getElementById('capture');
     let snapshot = document.getElementById( "captured" );
     let capture = document.getElementById( "capturec" );
@@ -193,39 +193,59 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 function gotDevices(mediaDevices) {
                     cameraButtons.innerHTML = '';
                     let count = 1;
+                    numVideoDevices = 0;
+                    mediaDevices.forEach( (d) => {
+                        if (d.kind === 'videoinput') {
+                            numVideoDevices++;
+                        }
+                    })
                     mediaDevices.forEach(mediaDevice => {
                         if (mediaDevice.kind === 'videoinput') {
-                        const btn = document.createElement('button');
-                        btn.value = mediaDevice.deviceId;
-                        const label = mediaDevice.label || `Camera ${count++}`;
-                        const textNode = document.createTextNode(label);
-                        btn.appendChild(textNode);
-                        btn.addEventListener('click', event => {
-                            selectedCamera = btn.value;
-                            // if (typeof currentStream !== 'undefined') {
-                            //     stopMediaTracks(currentStream);
-                            // }
-                            // const videoConstraints = {};
-                            if (selectedCamera === '') {
-                                videoConstraints.facingMode = 'environment';
-                            } else {
-                                videoConstraints.deviceId = { exact: selectedCamera };
+                            if(numVideoDevices > 1) {
+                                document.querySelector('#chooseCameraDiv').style.display = 'block';
+
+                                // <button class="mdc-button mdc-button--raised" id="takePhoto">
+                                //     <i class="material-icons mdc-button__icon" aria-hidden="true">add_circle_icon</i>
+                                //     <span class="mdc-button__label">Add photo</span>
+                                // </button>
+                                const btn = document.createElement('button');
+                                btn.setAttribute('class', 'mdc-button mdc-button--raised');
+                                btn.value = mediaDevice.deviceId;
+
+                                const spn = document.createElement('span');
+                                spn.setAttribute('class', 'mdc-button__label');
+                                
+                                const label = mediaDevice.label || `Camera ${count++}`;
+                                spn.innerHTML = label;
+                                // const textNode = document.createTextNode(label);
+                                // btn.appendChild(textNode);
+                                btn.appendChild(spn);
+                                btn.addEventListener('click', event => {
+                                    selectedCamera = btn.value;
+                                   
+                                    if (selectedCamera === '') {
+                                        videoConstraints.facingMode = 'environment';
+                                    } else {
+                                        videoConstraints.deviceId = { exact: selectedCamera };
+                                    }
+                                    const constraints = {
+                                        video: videoConstraints,
+                                        audio: false
+                                    };
+                                
+                                    navigator.mediaDevices
+                                    .getUserMedia(constraints)
+                                    .then(stream => {
+                                    currentStream = stream;
+                                    video.srcObject = stream;
+                                    return navigator.mediaDevices.enumerateDevices();
+                                    })
+                                    
+                                })
+                                cameraButtons.appendChild(btn);
                             }
-                            const constraints = {
-                                video: videoConstraints,
-                                audio: false
-                            };
                         
-                            navigator.mediaDevices
-                            .getUserMedia(constraints)
-                            .then(stream => {
-                            currentStream = stream;
-                            video.srcObject = stream;
-                            return navigator.mediaDevices.enumerateDevices();
-                            })
-                            
-                        })
-                        cameraButtons.appendChild(btn);
+                        
                         }
                     });
                 }
