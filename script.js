@@ -202,6 +202,32 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         btn.appendChild(textNode);
                         btn.addEventListener('click', event => {
                             selectedCamera = btn.value;
+                            if (typeof currentStream !== 'undefined') {
+                                stopMediaTracks(currentStream);
+                            }
+                            //console.log(selectedButton);
+                            const videoConstraints = {};
+                            if (selectedCamera === '') {
+                                videoConstraints.facingMode = 'environment';
+                            } else {
+                                videoConstraints.deviceId = { exact: selectedCamera };
+                            }
+                            const constraints = {
+                                video: videoConstraints,
+                                audio: false
+                            };
+                        
+                            navigator.mediaDevices
+                            .getUserMedia(constraints)
+                            .then(stream => {
+                            currentStream = stream;
+                            video.srcObject = stream;
+                            return navigator.mediaDevices.enumerateDevices();
+                            })
+                            .then(gotDevices)
+                            .catch(error => {
+                            console.error(error);
+                            });
                         })
                         cameraButtons.appendChild(btn);
                         }
