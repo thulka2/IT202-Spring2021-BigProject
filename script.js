@@ -378,7 +378,7 @@ let updateMap = (json = parkJSON, c = {lat: 41.869, lng: -87.649}) => {
 
                 db.parks.delete(parkName);
             }
-            console.log(`added ${parkName}`);
+            //console.log(`added ${parkName}`);
         })
 
 
@@ -417,6 +417,16 @@ let updateMyParks = () => {
             let spn = document.createElement('span');
             spn.setAttribute('class', "mdc-list-item__text");
 
+            let rp = document.createElement('span');
+            rp.setAttribute('class', "mdc-list-item__ripple");
+
+            let linkToApp = document.createElement('a');
+            let url = fav.name + ' ' + fav.address;
+            url = url.replaceAll(' ', '+');
+            linkToApp.setAttribute('href', `http://maps.google.com/?&q=${url}`);
+
+
+
             let n = document.createElement('p');
             n.setAttribute('class', "mdc-list-item__primary-text lightgreen");
             n.innerHTML = fav.name;
@@ -425,12 +435,21 @@ let updateMyParks = () => {
             a.setAttribute('class', 'mdc-list-item__secondary-text');
             a.innerHTML = fav.address;
 
+            console.log(url);
+            
+            spn.appendChild(rp);
             spn.appendChild(n);
             spn.appendChild(a);
+            
 
             tmp.appendChild(btn);
+            // linkToApp.appendChild(spn);
+            // tmp.appendChild(linkToApp);
             tmp.appendChild(spn);
 
+            tmp.querySelector('span').addEventListener("click", (e) => {
+                window.location = (`http://maps.google.com/?&q=${url}`);
+            })
 
             tmp.querySelector('button').addEventListener("click", (e) => {
                 document.querySelector('.mdc-snackbar__label').innerHTML = `Removed ${fav.name} from favorites.`;
