@@ -211,22 +211,19 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             } else {
                                 videoConstraints.deviceId = { exact: selectedCamera };
                             }
-                            // const constraints = {
-                            //     video: videoConstraints,
-                            //     audio: false
-                            // };
+                            const constraints = {
+                                video: videoConstraints,
+                                audio: false
+                            };
                         
-                            // navigator.mediaDevices
-                            // .getUserMedia(constraints)
-                            // .then(stream => {
-                            // currentStream = stream;
-                            // video.srcObject = stream;
-                            // return navigator.mediaDevices.enumerateDevices();
-                            // })
-                            // .then(gotDevices)
-                            // .catch(error => {
-                            // console.error(error);
-                            // });
+                            navigator.mediaDevices
+                            .getUserMedia(constraints)
+                            .then(stream => {
+                            currentStream = stream;
+                            video.srcObject = stream;
+                            return navigator.mediaDevices.enumerateDevices();
+                            })
+                            
                         })
                         cameraButtons.appendChild(btn);
                         }
