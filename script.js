@@ -3,8 +3,9 @@ let uniqueZips = [];
 let map;
 
 let drawerList;
-
-let db = new Dexie("basic_database");
+let snackbar; 
+let favList;
+let db = new Dexie("my_database");
 
 // chip name -> json entry name
 const amenityMap = {
@@ -40,6 +41,16 @@ function initMap() {
 
 
 window.addEventListener('DOMContentLoaded', (event) => {
+
+    // db.open();
+    db.version(1).stores({
+        parks: 'name, address,images',
+        pics: 'id++'
+    });
+
+    db.open();
+
+    
 
     document.querySelectorAll(".screen").forEach((screen) => {
         screen.style.display = "none"; // get of all screens at the start
@@ -94,15 +105,17 @@ window.addEventListener('DOMContentLoaded', (event) => {
     })
 
     drawerList = mdc.list.MDCList.attachTo(document.querySelector('.mdc-drawer__content .mdc-list'));
+    drawerList.listElements.forEach((listItemEl) =>{ mdc.ripple.MDCRipple.attachTo(listItemEl) });
+    //favList = mdc.list.MDCList.attachTo(document.querySelector('#favorites .mdc-list'));
     
-    const snackbar = mdc.snackbar.MDCSnackbar.attachTo(document.querySelector('.mdc-snackbar'));
+    snackbar = mdc.snackbar.MDCSnackbar.attachTo(document.querySelector('.mdc-snackbar'));
 
     // if(document.querySelector('.mdc-slider')) {
 
     // }
 
     // drawer settings
-    document.querySelectorAll('.mdc-list a').forEach(element => {
+    document.querySelectorAll('.mdc-drawer__content .mdc-list a').forEach(element => {
         //console.log(element);
         element.addEventListener( "click", (event) => {
 
@@ -115,6 +128,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
             let screen = event.target.getAttribute("data-screen");
             if (screen == "map") {
                 updateMap();
+            }
+
+            if (screen == "favorites") {
+                updateMyParks();
             }
 
            
@@ -152,28 +169,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 zips.push(parsed);
             }
 
-            //const location = { lat: parseFloat(park.the_geom.coordinates[0][0][0][0]), lng: parseFloat(park.the_geom.coordinates[0][0][0][1])};
-                    
-            //console.log(location);
-
-
-            // const contentString = 
-            //    "hey"
-
-
-            // const infowindow = new google.maps.InfoWindow({
-            //      content: contentString,
-            // });
-
-            // const marker = new google.maps.Marker({
-            //     position: location,
-            //     map,
-            //     title: "ID: "
-            // });
-
-            // marker.addListener("click", () => {
-            //     infowindow.open(map, marker);
-            // });
+          
         })
 
         uniqueZips = [...new Set(zips)];
@@ -316,14 +312,42 @@ let updateMap = (json = parkJSON, c = {lat: 41.869, lng: -87.649}) => {
         let index = parseInt((park.the_geom.coordinates[0][0]).length / 4);
         
         const location = { lat: parseFloat(park.the_geom.coordinates[0][0][index][1]), lng: parseFloat(park.the_geom.coordinates[0][0][index][0])};
+        let parkName = `${park.park} ${park.park_class}`
+
+        let infoDiv = document.createElement('div');
+        //let buttonObj = document.createElement('<button class="mdc-icon-button material-icons small-icon notFaved">favorite</button> ');
+        let buttonObj = document.createElement('button');
+        buttonObj.setAttribute('class', 'mdc-icon-button material-icons small-icon notFaved');
+
         
-        const contentString = 
-            `<h5>${park.park} ${park.park_class} </h5>
-            <h6>${park.location}, Chicago, IL, ${park.zip} </h6>`;
+        buttonObj.innerHTML = 'favorite';
+        let exists = 0;
+        db.parks.where("name").equals(parkName).count().then( (resp) => {
+            if (resp == 1) {
+                //console.log("Exists");
+                buttonObj.classList.remove('notFaved');
+                buttonObj.classList.add('Faved');
+            } else {
+                //console.log("Does not exist");
+            }
+        });
+       
+        
+        let h5 = document.createElement('h5');
+        h5.innerHTML = parkName;
+        h5.appendChild(buttonObj);
 
+        let parkAddress = `${park.location}, Chicago, IL, ${park.zip}`;
+        let h6 = document.createElement('h6');
+        h6.innerHTML = parkAddress;
 
+        infoDiv.appendChild(h5);
+        infoDiv.appendChild(h6);
+    
+
+        
         const infowindow = new google.maps.InfoWindow({
-            content: contentString,
+            content: infoDiv,
         });
 
            
@@ -337,11 +361,89 @@ let updateMap = (json = parkJSON, c = {lat: 41.869, lng: -87.649}) => {
             infowindow.open(map, marker);
         });
 
+        infowindow.content.querySelector('button').addEventListener("click", (e) => {
+            if (e.target.classList.contains('notFaved')) {
+                // add to the database
+                e.target.classList.remove('notFaved');
+                e.target.classList.add('Faved');
+                db.parks.add({name: parkName, address: parkAddress, images: []});
+
+
+            } else {
+                // remove from database
+                e.target.classList.remove('Faved');
+                e.target.classList.add('notFaved');
+                document.querySelector('.mdc-snackbar__label').innerHTML = `Removed ${parkName} from favorites.`;
+                snackbar.open();
+
+                db.parks.delete(parkName);
+            }
+            console.log(`added ${parkName}`);
+        })
+
+
        
     })
     document.querySelector("#numparksdisplayed").innerHTML = `Total parks displayed: ${tmp.length}`;
 }
 
+let updateMyParks = () => {
+
+    db.parks.count().then( (resp) => {
+        //document.querySelector("#numfavparks").innerHTML = `${resp} favorite parks`;
+    });
+
+    let favList = document.querySelector('#favorites .mdc-list');
+
+    db.parks.toArray().then( (resp) => {
+        resp.forEach ( (fav) => {
+        //     <li class="mdc-list-item listPadding" tabindex="0">
+        //     <button class="mdc-icon-button material-icons ourgreen" >remove_circle_outline</button>
+        //     <span class="mdc-list-item__text">
+        //       <p class="mdc-list-item__primary-text lightgreen">Two-line item</p>
+        //       <p class="mdc-list-item__secondary-text">Single-line item</p>
+        //     </span>
+        //   </li>
+
+            
+            let tmp = document.createElement('li');
+            tmp.setAttribute('class', 'mdc-list-item listPadding');
+
+            let btn = document.createElement('button');
+            btn.setAttribute('class', 'mdc-icon-button material-icons ourgreen');
+            btn.innerHTML = 'delete_forever';
+
+            let spn = document.createElement('span');
+            spn.setAttribute('class', "mdc-list-item__text");
+
+            let n = document.createElement('p');
+            n.setAttribute('class', "mdc-list-item__primary-text lightgreen");
+            n.innerHTML = fav.name;
+
+            let a = document.createElement('p');
+            a.setAttribute('class', 'mdc-list-item__secondary-text');
+            a.innerHTML = fav.address;
+
+            spn.appendChild(n);
+            spn.appendChild(a);
+
+            tmp.appendChild(btn);
+            tmp.appendChild(spn);
+
+
+            tmp.querySelector('button').addEventListener("click", (e) => {
+                document.querySelector('.mdc-snackbar__label').innerHTML = `Removed ${fav.name} from favorites.`;
+                snackbar.open();
+                db.parks.delete(fav.name);
+                favList.removeChild(tmp);
+            });
+
+            favList.appendChild(tmp);
+            
+        })
+    })
+    
+}
 
 // takes a park object and determines its lat, long and calls _getDistance
 let getDistance = (park, enteredZip) => {

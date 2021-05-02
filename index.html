@@ -14,7 +14,7 @@
    
   <!-- IndexedDB -->
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
-  
+
   <!-- Custom Files -->
   <script src="script.js"></script>
   <link rel="stylesheet" href="style.css">
@@ -66,11 +66,24 @@
   <div class="mdc-drawer-scrim"></div>
   <main class="mdc-top-app-bar--fixed-adjust" id ="main-content">
     <!-- Start of home -->
+    <div class="mdc-snackbar">
+      <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+        <div class="mdc-snackbar__label" aria-atomic="false">
+          Zip code is required.
+        </div>
+        <div class="mdc-snackbar__actions" aria-atomic="true">
+          <button type="button" class="mdc-button mdc-snackbar__action">
+            <div class="mdc-button__ripple"></div>
+            <span class="mdc-button__label">Close</span>
+          </button>
+        </div>
+      </div>
+    </div>
     <div id = "home" class="screen">
       <h1> Home </h1>
 
       <h3>What is Chicago Parks? </h3>
-      <p> &nbsp;&nbsp;&nbsp;&nbsp; Chicago Parks is an application for 
+      <p>Chicago Parks is an application for 
         Chicagoans that are stuck at home looking for parks to visit 
         in their area. It's not great being stuck at home all the time and 
         spending time at a park can help you take a well needed break. </p>
@@ -90,7 +103,7 @@
       </div>  
       <h3> Site features</h3>
       <p>
-        &nbsp;&nbsp;&nbsp;&nbsp; Discover new parks to visit by filtering their amenities and viewing them on the map. You can save your pictures and your favorite parks for quick reference.
+       Discover new parks to visit by filtering their amenities and viewing them on the map. You can save your pictures and your favorite parks for quick reference.
       </p>
       <div class="mdc-layout-grid mb3">
         <div class="mdc-layout-grid__inner">
@@ -133,6 +146,7 @@
     <!-- Start of filter -->
     <div id = "filter" class="screen">
       <h1> Filter </h1>
+      <p> Choose parks within a radius and containing your desired amenities. </p>
       <div class="mdc-layout-grid">
         <h3> Location </h3>
         
@@ -189,7 +203,7 @@
         </div>
 
         <h3> Amenities </h3>
-        
+        <p class="smallerp"> Adding an amenity will include parks that have it. Multiple selections results in parks that have at least one chosen amenity.</p>
         <div class="mdc-layout-grid__inner">
           <div class="mdc-layout-grid__cell--span-12">
             <div class="mdc-chip-set mdc-chip-set--filter" role="grid">
@@ -227,19 +241,7 @@
         </div>
 
       </div>
-      <div class="mdc-snackbar">
-        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
-          <div class="mdc-snackbar__label" aria-atomic="false">
-            Zip code is required.
-          </div>
-          <div class="mdc-snackbar__actions" aria-atomic="true">
-            <button type="button" class="mdc-button mdc-snackbar__action">
-              <div class="mdc-button__ripple"></div>
-              <span class="mdc-button__label">Close</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      
       
     </div>
      
@@ -252,6 +254,19 @@
     </div>
     <div id = "favorites" class="screen">
       <h1> My Parks </h1>
+      <p> View your favorite park locations and your photos.</p>
+      <div class="mdc-layout-grid">
+        <h3> Favorite Parks </h3>
+        <p id="numfavparks" class="smallerp"> You can add parks to your favorites on the Map screen. </p>
+        <ul class="mdc-list">
+
+         
+        </ul>
+        <h3> Images </h3>
+        <p class="smallerp"> View images you took at your parks. </p>
+
+
+      </div>
     </div>
   </main>
 
