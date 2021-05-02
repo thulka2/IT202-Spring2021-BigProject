@@ -1,6 +1,7 @@
 
 :root {
     --mdc-theme-primary: #356859;
+    --mdc-theme-primary-light: #629686;
     --mdc-theme-secondary: #775447;
     font-family: Roboto, sans-serif;
 }
@@ -15,8 +16,16 @@ main {
   
 }
 
+.mdc-snackbar__action:not(:disabled) {
+    color: var(--mdc-theme-primary-light);
+}
+
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-floating-label {
     color: var(--mdc-theme-primary) !important;
+}
+
+.errorMessage {
+    color: red !important;
 }
 
 h1, h2, h3 {
@@ -32,7 +41,7 @@ h5 {
 }
 
 h6 {
-    color: #629686;
+    color: var(--mdc-theme-primary-light);
     margin-left: 5%;
     margin-right: 5%;
 }

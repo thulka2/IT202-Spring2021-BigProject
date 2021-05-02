@@ -11,17 +11,15 @@
   <link href="https://unpkg.com/material-components-web@10.0.0/dist/material-components-web.min.css" rel="stylesheet">
   <script src="https://unpkg.com/material-components-web@11.0.0/dist/material-components-web.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+   
+  <!-- IndexedDB -->
+  <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
   
   <!-- Custom Files -->
   <script src="script.js"></script>
   <link rel="stylesheet" href="style.css">
-  
-  <script>
-    
+ 
 
-   
-
-  </script>
 
 </head>
 
@@ -146,9 +144,12 @@
             <label class="mdc-text-field mdc-text-field--filled">
               <span class="mdc-text-field__ripple"></span>
               <span class="mdc-floating-label" id="my-label-id">Zip code*</span>
-              <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
+              <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id" id="zipcodeTF">
               <span class="mdc-line-ripple"></span>
             </label>
+          </div>
+          <div class="mdc-layout-grid__cell--span-3">
+            <p class="errorMessage" id="errorZip" style="display: none;"> Required field </p>
           </div>
         </div>
 
@@ -210,6 +211,33 @@
             </div>
           </div>
           
+        </div>
+        <br/>
+        <br/>
+
+        <div class="mdc-layout-grid__inner">
+          <div class="mdc-layout-grid__cell--span-12">
+
+            <div class="mdc-touch-target-wrapper">
+              <button class="mdc-button mdc-button--raised" id="applyFilter">
+                <span class="mdc-button__label">Apply Filter</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="mdc-snackbar">
+        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+          <div class="mdc-snackbar__label" aria-atomic="false">
+            Zip code is required.
+          </div>
+          <div class="mdc-snackbar__actions" aria-atomic="true">
+            <button type="button" class="mdc-button mdc-snackbar__action">
+              <div class="mdc-button__ripple"></div>
+              <span class="mdc-button__label">Close</span>
+            </button>
+          </div>
         </div>
       </div>
       
