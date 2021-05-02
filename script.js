@@ -394,6 +394,7 @@ let updateMyParks = () => {
     });
 
     let favList = document.querySelector('#favorites .mdc-list');
+    favList.innerHTML = '';
 
     db.parks.toArray().then( (resp) => {
         resp.forEach ( (fav) => {
