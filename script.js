@@ -65,18 +65,18 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		var img = new Image();
 
 		ctx.drawImage( document.querySelector('#video'), 0, 0, capture.width, capture.height );
-
-		img.src		= capture.toDataURL( "image/png" );
+        let data = capture.toDataURL( "image/png" );
+		img.src		= data;
 		img.width	= 240;
 
 		snapshot.innerHTML = '';
-
+        db.pics.add({object: data});
 		snapshot.appendChild( img );
     })
     // db.open();
     db.version(1).stores({
         parks: 'name, address,images',
-        pics: 'id++'
+        pics: 'id++, object'
     });
 
     db.open();
@@ -202,32 +202,31 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         btn.appendChild(textNode);
                         btn.addEventListener('click', event => {
                             selectedCamera = btn.value;
-                            if (typeof currentStream !== 'undefined') {
-                                stopMediaTracks(currentStream);
-                            }
-                            //console.log(selectedButton);
-                            const videoConstraints = {};
+                            // if (typeof currentStream !== 'undefined') {
+                            //     stopMediaTracks(currentStream);
+                            // }
+                            // const videoConstraints = {};
                             if (selectedCamera === '') {
                                 videoConstraints.facingMode = 'environment';
                             } else {
                                 videoConstraints.deviceId = { exact: selectedCamera };
                             }
-                            const constraints = {
-                                video: videoConstraints,
-                                audio: false
-                            };
+                            // const constraints = {
+                            //     video: videoConstraints,
+                            //     audio: false
+                            // };
                         
-                            navigator.mediaDevices
-                            .getUserMedia(constraints)
-                            .then(stream => {
-                            currentStream = stream;
-                            video.srcObject = stream;
-                            return navigator.mediaDevices.enumerateDevices();
-                            })
-                            .then(gotDevices)
-                            .catch(error => {
-                            console.error(error);
-                            });
+                            // navigator.mediaDevices
+                            // .getUserMedia(constraints)
+                            // .then(stream => {
+                            // currentStream = stream;
+                            // video.srcObject = stream;
+                            // return navigator.mediaDevices.enumerateDevices();
+                            // })
+                            // .then(gotDevices)
+                            // .catch(error => {
+                            // console.error(error);
+                            // });
                         })
                         cameraButtons.appendChild(btn);
                         }
@@ -428,7 +427,6 @@ let updateMap = (json = parkJSON, c = {lat: 41.869, lng: -87.649}) => {
 
         
         buttonObj.innerHTML = 'favorite';
-        let exists = 0;
         db.parks.where("name").equals(parkName).count().then( (resp) => {
             if (resp == 1) {
                 //console.log("Exists");
@@ -485,7 +483,6 @@ let updateMap = (json = parkJSON, c = {lat: 41.869, lng: -87.649}) => {
 
                 db.parks.delete(parkName);
             }
-            //console.log(`added ${parkName}`);
         })
 
 
@@ -496,24 +493,22 @@ let updateMap = (json = parkJSON, c = {lat: 41.869, lng: -87.649}) => {
 
 let updateMyParks = () => {
 
-    db.parks.count().then( (resp) => {
-        //document.querySelector("#numfavparks").innerHTML = `${resp} favorite parks`;
-    });
 
     let favList = document.querySelector('#favorites .mdc-list');
     favList.innerHTML = '';
 
+    db.pics.toArray().then( (resp) => {
+        resp.forEach ( (pic) => {
+            let t = new Image();
+            t.src = pic.object;
+            t.width = 100;
+            document.getElementById( "captured" ).appendChild(t);
+        })
+    })
+
     db.parks.toArray().then( (resp) => {
         resp.forEach ( (fav) => {
-        //     <li class="mdc-list-item listPadding" tabindex="0">
-        //     <button class="mdc-icon-button material-icons ourgreen" >remove_circle_outline</button>
-        //     <span class="mdc-list-item__text">
-        //       <p class="mdc-list-item__primary-text lightgreen">Two-line item</p>
-        //       <p class="mdc-list-item__secondary-text">Single-line item</p>
-        //     </span>
-        //   </li>
-
-            
+       
             let tmp = document.createElement('li');
             tmp.setAttribute('class', 'mdc-list-item listPadding');
 
@@ -527,10 +522,10 @@ let updateMyParks = () => {
             let rp = document.createElement('span');
             rp.setAttribute('class', "mdc-list-item__ripple");
 
-            let linkToApp = document.createElement('a');
+            //let linkToApp = document.createElement('a');
             let url = fav.name + ' ' + fav.address;
             url = url.replaceAll(' ', '+');
-            linkToApp.setAttribute('href', `http://maps.google.com/?&q=${url}`);
+            //linkToApp.setAttribute('href', `http://maps.google.com/?&q=${url}`);
 
 
 
@@ -542,7 +537,6 @@ let updateMyParks = () => {
             a.setAttribute('class', 'mdc-list-item__secondary-text');
             a.innerHTML = fav.address;
 
-            console.log(url);
             
             spn.appendChild(rp);
             spn.appendChild(n);
@@ -550,8 +544,7 @@ let updateMyParks = () => {
             
 
             tmp.appendChild(btn);
-            // linkToApp.appendChild(spn);
-            // tmp.appendChild(linkToApp);
+       
             tmp.appendChild(spn);
 
             tmp.querySelector('span').addEventListener("click", (e) => {

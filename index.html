@@ -112,7 +112,7 @@
             
               <h1>Filter </h1>
               <p>
-                Filter the data to choose your own criteria for the parks shown to you. Choose amenities and other options you are looking for.
+                Filter the data to choose your own criteria for the parks shown to you. Choose the amenities and other options you are looking for.
               </p>
 
               
@@ -124,7 +124,7 @@
             
               <h1>Map </h1>
               <p>
-                Displays parks close to you with any applied filters. View park details upon clicking on map markers. 
+                Displays parks close to you with any applied filters. View park details upon clicking on map markers, and add parks to your favorites. 
               </p>
           
             </div>  
@@ -134,7 +134,7 @@
             
               <h1>My Parks </h1>
               <p>
-                A list of your favorite parks and any images taken with the application.  
+                An easily editable list of your favorite parks and your moments taken with the application. Add new pictures using our interface.
               </p>
           
             </div>  
@@ -257,13 +257,25 @@
       <p> View your favorite park locations and your photos.</p>
       <div class="mdc-layout-grid">
         <h3> Favorite Parks </h3>
-        <p id="numfavparks" class="smallerp"> You can add parks to your favorites on the Map screen. </p>
+        <p id="numfavparks" class="smallerp"> You can add parks to your favorites on the Map screen and remove them using the delete icon. Click on a park to open Google Maps.</p>
         <ul class="mdc-list">
 
          
         </ul>
-        <h3> Images </h3>
-        <p class="smallerp"> View images you took at your parks. </p>
+        <h3> Moments </h3>
+        <p class="smallerp"> View images you took at Chicago parks and add to your collection. </p>
+        <div class="mdc-touch-target-wrapper" id="addPhotoDiv">
+          <button class="mdc-button mdc-button--raised" id="takePhoto">
+            <i class="material-icons mdc-button__icon" aria-hidden="true">add_circle_icon</i>
+            <span class="mdc-button__label">Add photo</span>
+          </button>
+        </div>
+        <br/>
+        <div id="photoTakerDiv">
+          <h3> Choose Camera </h3>
+
+        </div>
+
         <div id="controls">
 
         </div>
