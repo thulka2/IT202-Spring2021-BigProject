@@ -72,6 +72,104 @@ window.addEventListener('DOMContentLoaded', (event) => {
     openPhotoButton.addEventListener("click", () => {
         document.querySelector('#photoTakerDiv').style.display = 'block';
         openPhotoButton.style.display = 'none';
+        if (typeof currentStream !== 'undefined') {
+            stopMediaTracks(currentStream);
+        }
+        //console.log(selectedButton);
+        const videoConstraints = {};
+        if (selectedCamera === '') {
+            videoConstraints.facingMode = 'environment';
+        } else {
+            videoConstraints.deviceId = { exact: selectedCamera };
+        }
+        const constraints = {
+            video: videoConstraints,
+            audio: false
+        };
+    
+        navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then(stream => {
+        currentStream = stream;
+        video.srcObject = stream;
+        capture.width = currentStream.getVideoTracks()[0].getSettings().width;
+        capture.height = currentStream.getVideoTracks()[0].getSettings().height;
+        console.log('setting width and height to ' + capture.width + capture.height);
+        return navigator.mediaDevices.enumerateDevices();
+        })
+        .then(gotDevices)
+        .catch(error => {
+        console.error(error);
+        });
+    
+        function gotDevices(mediaDevices) {
+            cameraButtons.innerHTML = '';
+            let count = 1;
+            numVideoDevices = 0;
+            mediaDevices.forEach( (d) => {
+                if (d.kind === 'videoinput') {
+                    numVideoDevices++;
+                }
+            })
+            mediaDevices.forEach(mediaDevice => {
+                if (mediaDevice.kind === 'videoinput') {
+                    if(numVideoDevices > 1) {
+                        
+                        document.querySelector('#chooseCameraDiv').style.display = 'block';
+                        
+                        // <button class="mdc-button mdc-button--raised" id="takePhoto">
+                        //     <i class="material-icons mdc-button__icon" aria-hidden="true">add_circle_icon</i>
+                        //     <span class="mdc-button__label">Add photo</span>
+                        // </button>
+                        const btn = document.createElement('button');
+                        btn.setAttribute('class', 'mdc-button mdc-button--raised');
+                        btn.value = mediaDevice.deviceId;
+
+                        const spn = document.createElement('span');
+                        spn.setAttribute('class', 'mdc-button__label');
+                        
+                        const label = mediaDevice.label || `Camera ${count++}`;
+                        spn.innerHTML = label;
+                        // const textNode = document.createTextNode(label);
+                        // btn.appendChild(textNode);
+                        btn.appendChild(spn);
+                        btn.addEventListener('click', event => {
+                            selectedCamera = btn.value;
+                           
+                            if (selectedCamera === '') {
+                                videoConstraints.facingMode = 'environment';
+                            } else {
+                                videoConstraints.deviceId = { exact: selectedCamera };
+                            }
+                            const constraints = {
+                                video: videoConstraints,
+                                audio: false
+                            };
+                        
+                            navigator.mediaDevices
+                            .getUserMedia(constraints)
+                            .then(stream => {
+                            currentStream = stream;
+                            video.srcObject = stream;
+                            capture.width = currentStream.getVideoTracks()[0].getSettings().width;
+                            capture.height = currentStream.getVideoTracks()[0].getSettings().height;
+                            //console.log('setting width and height to ' + capture.width + capture.height);
+                            return navigator.mediaDevices.enumerateDevices();
+                            })
+                            
+                        })
+                        cameraButtons.appendChild(btn);
+                    }
+                
+                
+                }
+            });
+        }
+        
+        
+    
+       
+        navigator.mediaDevices.enumerateDevices().then(gotDevices);
     })
     
 
@@ -203,104 +301,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
             if (screen == "favorites") {
                 updateMyParks();
-                if (typeof currentStream !== 'undefined') {
-                    stopMediaTracks(currentStream);
-                }
-                //console.log(selectedButton);
-                const videoConstraints = {};
-                if (selectedCamera === '') {
-                    videoConstraints.facingMode = 'environment';
-                } else {
-                    videoConstraints.deviceId = { exact: selectedCamera };
-                }
-                const constraints = {
-                    video: videoConstraints,
-                    audio: false
-                };
-            
-                navigator.mediaDevices
-                .getUserMedia(constraints)
-                .then(stream => {
-                currentStream = stream;
-                video.srcObject = stream;
-                capture.width = currentStream.getVideoTracks()[0].getSettings().width;
-                capture.height = currentStream.getVideoTracks()[0].getSettings().height;
-                console.log('setting width and height to ' + capture.width + capture.height);
-                return navigator.mediaDevices.enumerateDevices();
-                })
-                .then(gotDevices)
-                .catch(error => {
-                console.error(error);
-                });
-            
-                function gotDevices(mediaDevices) {
-                    cameraButtons.innerHTML = '';
-                    let count = 1;
-                    numVideoDevices = 0;
-                    mediaDevices.forEach( (d) => {
-                        if (d.kind === 'videoinput') {
-                            numVideoDevices++;
-                        }
-                    })
-                    mediaDevices.forEach(mediaDevice => {
-                        if (mediaDevice.kind === 'videoinput') {
-                            if(numVideoDevices > 1) {
-                                
-                                document.querySelector('#chooseCameraDiv').style.display = 'block';
-                                
-                                // <button class="mdc-button mdc-button--raised" id="takePhoto">
-                                //     <i class="material-icons mdc-button__icon" aria-hidden="true">add_circle_icon</i>
-                                //     <span class="mdc-button__label">Add photo</span>
-                                // </button>
-                                const btn = document.createElement('button');
-                                btn.setAttribute('class', 'mdc-button mdc-button--raised');
-                                btn.value = mediaDevice.deviceId;
-
-                                const spn = document.createElement('span');
-                                spn.setAttribute('class', 'mdc-button__label');
-                                
-                                const label = mediaDevice.label || `Camera ${count++}`;
-                                spn.innerHTML = label;
-                                // const textNode = document.createTextNode(label);
-                                // btn.appendChild(textNode);
-                                btn.appendChild(spn);
-                                btn.addEventListener('click', event => {
-                                    selectedCamera = btn.value;
-                                   
-                                    if (selectedCamera === '') {
-                                        videoConstraints.facingMode = 'environment';
-                                    } else {
-                                        videoConstraints.deviceId = { exact: selectedCamera };
-                                    }
-                                    const constraints = {
-                                        video: videoConstraints,
-                                        audio: false
-                                    };
-                                
-                                    navigator.mediaDevices
-                                    .getUserMedia(constraints)
-                                    .then(stream => {
-                                    currentStream = stream;
-                                    video.srcObject = stream;
-                                    capture.width = currentStream.getVideoTracks()[0].getSettings().width;
-                                    capture.height = currentStream.getVideoTracks()[0].getSettings().height;
-                                    //console.log('setting width and height to ' + capture.width + capture.height);
-                                    return navigator.mediaDevices.enumerateDevices();
-                                    })
-                                    
-                                })
-                                cameraButtons.appendChild(btn);
-                            }
-                        
-                        
-                        }
-                    });
-                }
                 
-                
-            
-               
-                navigator.mediaDevices.enumerateDevices().then(gotDevices);
             
             }
 
