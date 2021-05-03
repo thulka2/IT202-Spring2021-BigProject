@@ -56,27 +56,67 @@ window.addEventListener('DOMContentLoaded', (event) => {
     video = document.querySelector('#video');
     const cameraButtons = document.querySelector('#cameraChoices');
     const captureButton = document.getElementById('capture');
-    let snapshot = document.getElementById( "captured" );
     let capture = document.getElementById( "capturec" );
+
+    let retake = document.querySelector('#retakePic');
+    let savePic = document.querySelector('#savePic');
+
+    let closePhotoButton = document.querySelector('#closePhoto');
+    let openPhotoButton = document.querySelector('#takePhoto');
+
+    closePhotoButton.addEventListener("click", () => {
+        document.querySelector('#photoTakerDiv').style.display = 'none';
+        openPhotoButton.style.display = 'block';
+    })
+
+    openPhotoButton.addEventListener("click", () => {
+        document.querySelector('#photoTakerDiv').style.display = 'block';
+        openPhotoButton.style.display = 'none';
+    })
+    
+
+    retake.addEventListener("click", () => {
+        captureButton.style.display = 'inline-block';
+        retake.style.display = 'none';
+        savePic.style.display = 'none';
+        video.play();
+    })
 
 
     captureButton.addEventListener("click", () => {
+        
+        //console.log(video.srcObject.getVideoTracks()[0].getSettings().width);
+       
+        // video.style.display = 'none';
+        // capture.style.display = 'block';
+        captureButton.style.display = 'none';
+        video.pause();
+        retake.style.display = 'inline-block';
+        savePic.style.display = 'inline-block';
+
+		//snapshot.innerHTML = '';
+		//snapshot.appendChild( img );
+    })
+
+    savePic.addEventListener("click", () => {
         var ctx = capture.getContext( '2d' );
-		var img = new Image();
-
-		ctx.drawImage( document.querySelector('#video'), 0, 0, capture.width, capture.height );
+        //console.log(video.srcObject.getVideoTracks()[0].getSettings().width + ', ' + video.srcObject.getVideoTracks()[0].getSettings().height);
+        ctx.drawImage( document.querySelector('#video'), 0, 0, capture.width, capture.height );
         let data = capture.toDataURL( "image/png" );
-		img.src		= data;
-		img.width	= 240;
+        db.pics.add({object: data, width: capture.width });
+        captureButton.style.display = 'inline-block';
+        retake.style.display = 'none';
+        savePic.style.display = 'none';
+        video.play();
+        document.querySelector('.mdc-snackbar__label').innerHTML = `Added photo to Moments.`;
+        snackbar.open();
+        updateMyParks();
 
-		snapshot.innerHTML = '';
-        db.pics.add({object: data});
-		snapshot.appendChild( img );
     })
     // db.open();
     db.version(1).stores({
         parks: 'name, address,images',
-        pics: 'id++, object'
+        pics: 'id++, object, width, height'
     });
 
     db.open();
@@ -183,6 +223,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 .then(stream => {
                 currentStream = stream;
                 video.srcObject = stream;
+                capture.width = currentStream.getVideoTracks()[0].getSettings().width;
+                capture.height = currentStream.getVideoTracks()[0].getSettings().height;
+                console.log('setting width and height to ' + capture.width + capture.height);
                 return navigator.mediaDevices.enumerateDevices();
                 })
                 .then(gotDevices)
@@ -202,8 +245,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     mediaDevices.forEach(mediaDevice => {
                         if (mediaDevice.kind === 'videoinput') {
                             if(numVideoDevices > 1) {
+                                
                                 document.querySelector('#chooseCameraDiv').style.display = 'block';
-
+                                
                                 // <button class="mdc-button mdc-button--raised" id="takePhoto">
                                 //     <i class="material-icons mdc-button__icon" aria-hidden="true">add_circle_icon</i>
                                 //     <span class="mdc-button__label">Add photo</span>
@@ -238,6 +282,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                     .then(stream => {
                                     currentStream = stream;
                                     video.srcObject = stream;
+                                    capture.width = currentStream.getVideoTracks()[0].getSettings().width;
+                                    capture.height = currentStream.getVideoTracks()[0].getSettings().height;
+                                    //console.log('setting width and height to ' + capture.width + capture.height);
                                     return navigator.mediaDevices.enumerateDevices();
                                     })
                                     
@@ -510,15 +557,24 @@ let updateMap = (json = parkJSON, c = {lat: 41.869, lng: -87.649}) => {
 
 let updateMyParks = () => {
 
+  
 
     let favList = document.querySelector('#favorites .mdc-list');
     favList.innerHTML = '';
 
+    db.parks.count().then((resp) => {
+        if (resp == 0 ) {
+            favList.innerHTML = "&nbsp&nbsp&nbsp&nbsp You haven't added any parks to your favorites.";
+        }
+    })
+
     db.pics.toArray().then( (resp) => {
+        document.getElementById("captured").innerHTML = '';
         resp.forEach ( (pic) => {
             let t = new Image();
             t.src = pic.object;
-            t.width = 100;
+           
+            t.width = pic.width;
             document.getElementById( "captured" ).appendChild(t);
         })
     })

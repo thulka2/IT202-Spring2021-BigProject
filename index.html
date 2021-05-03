@@ -271,17 +271,34 @@
           </button>
         </div>
         <br/>
-        <div id="photoTakerDiv">
+        <div id="photoTakerDiv" style="display: none;">
+          <div id="closeDiv" style="text-align: right; align-items: right;">
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" aria-label="close" id="closePhoto" style="margin-right: 10px; margin-top: 10px;">close</button>
+
+          </div>
           <div id="chooseCameraDiv" style="display: none;">
             <h3> Choose Camera </h3>
             <div id="cameraChoices" class="center"></div>
           </div>
-        </div>
+          <br/>
+          <video id="video" autoplay playsinline></video>
+          <br/>
+          <div id="photoOptions" class="center">
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button ourgreen " aria-label="Take photo" id="capture">add_a_photo</button>
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button ourgreen " aria-label="Retake" id="retakePic" style="display: none;">restart_alt</button>
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button ourgreen " aria-label="Save" id ="savePic" style="display: none;">save</button>
 
+          </div>
+          <br/>
+          <canvas id="capturec"></canvas>
+
+         
+            
+        </div>
+        <br/>
     
-        <button id="capture">Capture</button>
-        <video id="video" autoplay playsinline></video>
-        <canvas id="capturec" width="320" height="240"></canvas>
+        <!-- <button id="capture">Capture</button> -->
+        
         <div id="captured">
 
         </div>
