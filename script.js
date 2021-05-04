@@ -601,6 +601,8 @@ let updateMyParks = () => {
 
             let img = new Image();
             img.src = pic.object;
+            // img.width = pic.width;
+            // img.height = pic.height;
             
             
             img.setAttribute('class', 'momentsImg');
