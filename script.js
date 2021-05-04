@@ -597,7 +597,7 @@ let updateMyParks = () => {
             document.querySelector("#imgGrid #dummy").innerHTML = '';
             let d = document.createElement('div');
             d.setAttribute('class', 'mdc-layout-grid__cell--span-4');
-            d.setAttribute('style', 'overflow: hidden;  width:100%; min-height:250px;');
+            d.setAttribute('style', 'overflow: hidden;  width:100%; height:500px;');
 
             let img = new Image();
             img.src = pic.object;
@@ -609,6 +609,11 @@ let updateMyParks = () => {
             d.style.backgroundSize = 'cover';
             d.style.backgroundPosition = 'center';
             d.style.backgroundRepeat = 'no-repeat';
+            d.addEventListener( "click", () => {
+                var w = window.open("");
+                w.document.write(img.outerHTML);
+                w.document.close();
+            })
            
             document.querySelector("#captured").appendChild(d);
         })
