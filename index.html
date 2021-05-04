@@ -18,6 +18,8 @@
   <!-- Custom Files -->
   <script src="script.js"></script>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+
  
 
 
@@ -325,13 +327,24 @@
 
 
 
-  
-  <!-- <script src="app.js" async></script> -->
+  <script> 
+    if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw.js').then((registration) => {
+                // Registration was successful
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, (err) => {
+                // registration failed :(
+                console.log('ServiceWorker registration failed: ', err);
+            });
+            });
+    }
+  </script>
  
-    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-    <script
+  <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+  <script
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRJvN3LHRUT0ZT9WSDivmkCJcnlvpNtcA&callback=initMap&libraries=&v=weekly"
-  async
-   ></script>
+  async>
+  </script>
 </body>
 </html>
