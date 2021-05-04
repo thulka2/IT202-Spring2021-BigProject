@@ -597,7 +597,7 @@ let updateMyParks = () => {
             document.querySelector("#imgGrid #dummy").innerHTML = '';
             let d = document.createElement('div');
             d.setAttribute('class', 'mdc-layout-grid__cell--span-4');
-            d.setAttribute('style', 'overflow: hidden;  width:100%; height:250px;');
+            d.setAttribute('style', 'overflow: hidden;  width:100%; min-height:250px;');
 
             let img = new Image();
             img.src = pic.object;
