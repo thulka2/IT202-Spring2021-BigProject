@@ -55,18 +55,32 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     video = document.querySelector('#video');
     const cameraButtons = document.querySelector('#cameraChoices');
-    const captureButton = document.getElementById('capture');
-    let capture = document.getElementById( "capturec" );
+    const captureButton = document.querySelector('#capture');
+    let capture = document.querySelector( "#capturec" );
 
     let retake = document.querySelector('#retakePic');
     let savePic = document.querySelector('#savePic');
 
     let closePhotoButton = document.querySelector('#closePhoto');
     let openPhotoButton = document.querySelector('#takePhoto');
+    let togglePhotosButton = document.querySelector("#togglePhotos");
+
+    togglePhotosButton.addEventListener( "click", () => {
+        if (togglePhotosButton.querySelector('i').innerHTML == 'expand_less') {
+            togglePhotosButton.querySelector('i').innerHTML = 'expand_more';
+            togglePhotosButton.querySelector('span').innerHTML = 'Show photos';
+            document.querySelector('#imgGrid').style.display = "none";
+
+        } else {
+            togglePhotosButton.querySelector('i').innerHTML = 'expand_less';
+            togglePhotosButton.querySelector('span').innerHTML = 'Hide photos';
+            document.querySelector('#imgGrid').style.display = "block";
+        }
+    })
 
     closePhotoButton.addEventListener("click", () => {
         document.querySelector('#photoTakerDiv').style.display = 'none';
-        openPhotoButton.style.display = 'block';
+        openPhotoButton.style.display = 'inline-block';
     })
 
     openPhotoButton.addEventListener("click", () => {
@@ -562,6 +576,7 @@ let updateMyParks = () => {
 
     let favList = document.querySelector('#favorites .mdc-list');
     favList.innerHTML = '';
+    document.querySelector("#captured").innerHTML = '';
 
     db.parks.count().then((resp) => {
         if (resp == 0 ) {
@@ -569,14 +584,32 @@ let updateMyParks = () => {
         }
     })
 
+    db.pics.count().then( (resp)  => {
+        if (resp == 0) {
+            document.querySelector("#imgGrid #dummy").innerHTML = "&nbsp&nbsp&nbsp&nbsp You have no photos in your moments." ;
+        }
+    })
+
     db.pics.toArray().then( (resp) => {
-        document.getElementById("captured").innerHTML = '';
+        resp = resp.sort((a, b) => b.id - a.id);
+        
         resp.forEach ( (pic) => {
-            let t = new Image();
-            t.src = pic.object;
+            document.querySelector("#imgGrid #dummy").innerHTML = '';
+            let d = document.createElement('div');
+            d.setAttribute('class', 'mdc-layout-grid__cell--span-4');
+            d.setAttribute('style', 'overflow: hidden;  width:100%; height:250px;');
+
+            let img = new Image();
+            img.src = pic.object;
+            
+            
+            img.setAttribute('class', 'momentsImg');
+            d.style.backgroundImage = `url(${img.src})`;
+            d.style.backgroundSize = 'contain';
+            d.style.backgroundPosition = 'center';
+            d.style.backgroundRepeat = 'no-repeat';
            
-            t.width = pic.width;
-            document.getElementById( "captured" ).appendChild(t);
+            document.querySelector("#captured").appendChild(d);
         })
     })
 

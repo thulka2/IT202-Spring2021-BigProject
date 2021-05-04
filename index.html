@@ -264,13 +264,7 @@
         </ul>
         <h3> Moments </h3>
         <p class="smallerp"> View images you took at Chicago parks and add to your collection. </p>
-        <div class="mdc-touch-target-wrapper" id="addPhotoDiv">
-          <button class="mdc-button mdc-button--raised" id="takePhoto">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">add_circle_icon</i>
-            <span class="mdc-button__label">Add photo</span>
-          </button>
-        </div>
-        <br/>
+        
         <div id="photoTakerDiv" style="display: none;">
           <div id="closeDiv" style="text-align: right; align-items: right;">
             <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" aria-label="close" id="closePhoto" style="margin-right: 10px; margin-top: 10px;">close</button>
@@ -296,12 +290,31 @@
             
         </div>
         <br/>
-    
-        <!-- <button id="capture">Capture</button> -->
-        
-        <div id="captured">
+        <div>
+          <div class="mdc-touch-target-wrapper" id="addPhotoDiv">
+            <button class="mdc-button mdc-button--raised" id="takePhoto">
+              <i class="material-icons mdc-button__icon" aria-hidden="true">add_circle_icon</i>
+              <span class="mdc-button__label">Take photo</span>
+            </button>
+          </div>
+          <div class="mdc-touch-target-wrapper" id="removeDiv">
+            <button class="mdc-button mdc-button--raised" id="togglePhotos">
+              <span class="mdc-button__label">Hide photos</span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">expand_less</i>
 
+            </button>
+          </div>
         </div>
+        <br/>
+  
+        <div class="mdc-layout-grid" id="imgGrid">
+          <div id="dummy"></div>
+          <div class="mdc-layout-grid__inner" id="captured">
+          
+          </div>
+        </div>
+
+     
 
 
       </div>
