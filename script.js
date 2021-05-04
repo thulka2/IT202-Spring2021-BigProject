@@ -68,12 +68,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
     togglePhotosButton.addEventListener( "click", () => {
         if (togglePhotosButton.querySelector('i').innerHTML == 'expand_less') {
             togglePhotosButton.querySelector('i').innerHTML = 'expand_more';
-            togglePhotosButton.querySelector('span').innerHTML = 'Show photos';
+            togglePhotosButton.querySelector('span').innerHTML = 'Show all';
             document.querySelector('#imgGrid').style.display = "none";
 
         } else {
             togglePhotosButton.querySelector('i').innerHTML = 'expand_less';
-            togglePhotosButton.querySelector('span').innerHTML = 'Hide photos';
+            togglePhotosButton.querySelector('span').innerHTML = 'Hide all';
             document.querySelector('#imgGrid').style.display = "block";
         }
     })
@@ -605,7 +605,8 @@ let updateMyParks = () => {
             
             img.setAttribute('class', 'momentsImg');
             d.style.backgroundImage = `url(${img.src})`;
-            d.style.backgroundSize = 'contain';
+            //d.style.backgroundSize = 'contain';
+            d.style.backgroundSize = 'cover';
             d.style.backgroundPosition = 'center';
             d.style.backgroundRepeat = 'no-repeat';
            
