@@ -1,10 +1,7 @@
 let CACHE_NAME = 'my-site-cache-v1';
 let urlsToCache = [
   './',
-  './index.html',
-  './script.js',
-  './style.css'
-
+  './index.html'
   
   
 ];
