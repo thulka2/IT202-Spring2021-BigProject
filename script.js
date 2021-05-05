@@ -144,8 +144,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         
                         const label = mediaDevice.label || `Camera ${count++}`;
                         spn.innerHTML = label;
-                        // const textNode = document.createTextNode(label);
-                        // btn.appendChild(textNode);
+            
                         btn.appendChild(spn);
                         btn.addEventListener('click', event => {
                             selectedCamera = btn.value;
@@ -167,7 +166,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             video.srcObject = stream;
                             capture.width = currentStream.getVideoTracks()[0].getSettings().width;
                             capture.height = currentStream.getVideoTracks()[0].getSettings().height;
-                            //console.log('setting width and height to ' + capture.width + capture.height);
                             return navigator.mediaDevices.enumerateDevices();
                             })
                             
@@ -197,17 +195,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     captureButton.addEventListener("click", () => {
         
-        //console.log(video.srcObject.getVideoTracks()[0].getSettings().width);
-       
-        // video.style.display = 'none';
-        // capture.style.display = 'block';
         captureButton.style.display = 'none';
         video.pause();
         retake.style.display = 'inline-block';
         savePic.style.display = 'inline-block';
 
-		//snapshot.innerHTML = '';
-		//snapshot.appendChild( img );
     })
 
     savePic.addEventListener("click", () => {
@@ -283,19 +275,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
     })
 
     document.querySelector('.mdc-slider').addEventListener("MDCSlider:change", () => {
-        // console.log(slider.getValue());
         document.querySelector('#maxmiles p').innerHTML = `${slider.getValue()}  miles`;
     })
 
     drawerList = mdc.list.MDCList.attachTo(document.querySelector('.mdc-drawer__content .mdc-list'));
     drawerList.listElements.forEach((listItemEl) =>{ mdc.ripple.MDCRipple.attachTo(listItemEl) });
-    //favList = mdc.list.MDCList.attachTo(document.querySelector('#favorites .mdc-list'));
     
     snackbar = mdc.snackbar.MDCSnackbar.attachTo(document.querySelector('.mdc-snackbar'));
 
-    // if(document.querySelector('.mdc-slider')) {
-
-    // }
+   
 
     // drawer settings
     document.querySelectorAll('.mdc-drawer__content .mdc-list a').forEach(element => {
@@ -306,17 +294,13 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 screen.style.display = "none"; // get rid of the open screens
             })
 
-        
-        
             let screen = event.target.getAttribute("data-screen");
             if (screen == "map") {
                 updateMap();
             }
 
             if (screen == "favorites") {
-                updateMyParks();
-                
-            
+                updateMyParks();            
             }
 
            
@@ -327,7 +311,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 slider.setValue(slider.getValue());
                 slider.layout();
             }
-            //console.log(element.getAttribute('data-screen'));
 
         })
     });
@@ -337,10 +320,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
     
 
     // get park data
-    //https://data.cityofchicago.org/resource/ejsh-fztr.json
-
-
-
     fetch(' https://data.cityofchicago.org/resource/ejsh-fztr.json').then( (response) => {
         return response.json()})
     .then ( (json) => {
@@ -396,6 +375,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     document.querySelector('#templateChip').style.display = 'none';
     chipSetEl.removeChild(templateChip);
+
+   
 
     
     let filterButton = document.querySelector('#applyFilter'); 
@@ -477,7 +458,20 @@ window.addEventListener('DOMContentLoaded', (event) => {
     });
 
 
+    let resetFilterButton = document.querySelector('#resetFilter');
+    resetFilterButton.addEventListener('click', () => {
+        
+        chipSet.chips.forEach( (chip) => {
+            chip.selected = false;
+        })
+        document.querySelector('#zipcodeTF').value = '';
+        slider.setValue(15);
+        slider.layout();
+        document.querySelector('#maxmiles p').innerHTML = `${slider.getValue()}  miles`;
+        document.querySelector('.mdc-snackbar__label').innerHTML = "Removed all filters."
+        snackbar.open();
 
+    })
    
 
     
@@ -508,12 +502,9 @@ let updateMap = (json = parkJSON, c = {lat: 41.869, lng: -87.649}) => {
         buttonObj.innerHTML = 'favorite';
         db.parks.where("name").equals(parkName).count().then( (resp) => {
             if (resp == 1) {
-                //console.log("Exists");
                 buttonObj.classList.remove('notFaved');
                 buttonObj.classList.add('Faved');
-            } else {
-                //console.log("Does not exist");
-            }
+            } 
         });
        
         
@@ -607,7 +598,6 @@ let updateMyParks = () => {
             
             img.setAttribute('class', 'momentsImg');
             d.style.backgroundImage = `url(${img.src})`;
-            //d.style.backgroundSize = 'contain';
             d.style.backgroundSize = 'cover';
             d.style.backgroundPosition = 'center';
             d.style.backgroundRepeat = 'no-repeat';
@@ -637,12 +627,8 @@ let updateMyParks = () => {
             let rp = document.createElement('span');
             rp.setAttribute('class', "mdc-list-item__ripple");
 
-            //let linkToApp = document.createElement('a');
             let url = fav.name + ' ' + fav.address;
             url = url.replaceAll(' ', '+');
-            //linkToApp.setAttribute('href', `http://maps.google.com/?&q=${url}`);
-
-
 
             let n = document.createElement('p');
             n.setAttribute('class', "mdc-list-item__primary-text lightgreen");
@@ -685,7 +671,6 @@ let getDistance = (park, enteredZip) => {
     let index = parseInt((park.the_geom.coordinates[0][0]).length / 4);
     let lat = parseFloat(park.the_geom.coordinates[0][0][index][1]);
     let long = parseFloat(park.the_geom.coordinates[0][0][index][0]);
-    //console.log(_getDistance(zipcodeMap[parseInt(enteredZip)][0], zipcodeMap[parseInt(enteredZip)][1],  lat, long))
     return(_getDistance(zipcodeMap[parseInt(enteredZip)][0], zipcodeMap[parseInt(enteredZip)][1],  lat, long));
 }
 
@@ -693,7 +678,6 @@ let getDistance = (park, enteredZip) => {
 let _getDistance = (originLat, originLong, parkLat, parkLong) => {
     let distance = 0;
 
-    //console.log(`${originLat}, ${originLong}, ${parkLat}, ${parkLong}`);
     Math.radians = function(deg) {
         return deg * (Math.PI / 180);
     }
