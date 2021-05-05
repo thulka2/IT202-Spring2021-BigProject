@@ -18,6 +18,8 @@ function stopMediaTracks(stream) {
     });
 }
 
+let lastStoredParkInfo;
+
 // chip name -> json entry name
 const amenityMap = {
     'Basketball': 'basketball, basketba_1',
@@ -296,7 +298,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
             let screen = event.target.getAttribute("data-screen");
             if (screen == "map") {
-                updateMap();
+                if (lastStoredParkInfo == null) {
+                    updateMap();
+                } else {
+                    updateMap(lastStoredParkInfo, lastStoredCenter);
+                }
             }
 
             if (screen == "favorites") {
@@ -438,7 +444,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
             uniqueParks = uniqueParks.filter ( p => getDistance(p, enteredZip) <= maxDistance);
         
-
+            lastStoredParkInfo = uniqueParks;
+            lastStoredCenter = {lat: zipcodeMap[parseInt(enteredZip)][0], lng: zipcodeMap[parseInt(enteredZip)][1]};
             updateMap(uniqueParks, {lat: zipcodeMap[parseInt(enteredZip)][0], lng: zipcodeMap[parseInt(enteredZip)][1]});
             drawerList.selectedIndex = 2; // set selection to map
     
@@ -467,6 +474,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         document.querySelector('#zipcodeTF').value = '';
         slider.setValue(15);
         slider.layout();
+        lastStoredParkInfo = null; 
         document.querySelector('#maxmiles p').innerHTML = `${slider.getValue()}  miles`;
         document.querySelector('.mdc-snackbar__label').innerHTML = "Removed all filters."
         snackbar.open();
